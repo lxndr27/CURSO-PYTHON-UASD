@@ -1,31 +1,45 @@
 #5-Cree una aplicación de cajero automático para el banco ABC. El cajero tendrá un límite de billetes descrito a continuación: 9 de 1000, 19 de 500, 99 de 100
 
+billetes_1000 = 9
+billetes_500 = 19
+billetes_100 = 99
+
 limite_retiro_abc = 10000
 limite_transaccion_abc = 2000
-billetes_disponibles = {'1000': 9, '500': 19, '100': 99}
 
-banco = input("Ingrese el nombre del banco: ")
-monto_a_retirar = float(input("Ingrese el monto a retirar: "))
+limite_retiro = limite_retiro_abc
+limite_transaccion = limite_transaccion_abc
 
-if banco.upper() == "ABC" and monto_a_retirar > limite_transaccion_abc:
-    print(f"El monto solicitado excede el límite de transacción de {limite_transaccion_abc} pesos.")
-elif banco.upper() != "ABC" and monto_a_retirar > limite_retiro_abc:
-    print(f"El monto solicitado excede el límite de retiro de {limite_retiro_abc} pesos.")
-else:
-    monto_total_retirado = monto_a_retirar 
-    billetes_dispensados = {'1000': 0, '500': 0, '100': 0}
+while True:
+    banco = input("Ingrese el nombre del banco: ")
+    monto_a_retirar = int(input("Ingrese el monto a retirar: "))
 
-    for denominacion in billetes_dispensados:
-        cantidad_billetes = min(billetes_disponibles[denominacion], monto_a_retirar // int(denominacion))
-        billetes_dispensados[denominacion] = cantidad_billetes
-        monto_a_retirar -= cantidad_billetes * int(denominacion)
-        billetes_disponibles[denominacion] -= cantidad_billetes
-
-    if monto_a_retirar > 0:
-        print("El monto solicitado no puede ser dispensado completamente.")
+    if monto_a_retirar > limite_retiro:
+        print("El monto solicitado excede el límite de retiro.")
+    elif monto_a_retirar > limite_transaccion:
+        print("El monto solicitado excede el límite de transacción por transacción.")
     else:
-        print("Billetes dispensados:")
-        for denominacion, cantidad in billetes_dispensados.items():
-            if cantidad > 0:
-                print(f"{cantidad} billete(s) de {denominacion} pesos.")
-print("usted ha retirado RD$"+str(monto_total_retirado)+" del banco "+str(banco)+".")
+        billetes_dispensados_1000 = min(billetes_1000, monto_a_retirar // 1000)
+        monto_a_retirar -= billetes_dispensados_1000 * 1000
+
+        billetes_dispensados_500 = min(billetes_500, monto_a_retirar // 500)
+        monto_a_retirar -= billetes_dispensados_500 * 500
+
+        billetes_dispensados_100 = min(billetes_100, monto_a_retirar // 100)
+        monto_a_retirar -= billetes_dispensados_100 * 100
+
+        if monto_a_retirar == 0:
+            print("\nMonto dispensado:")
+            print(f"Billetes de 1000: {billetes_dispensados_1000}")
+            print(f"Billetes de 500: {billetes_dispensados_500}")
+            print(f"Billetes de 100: {billetes_dispensados_100}")
+
+            limite_retiro -= sum([billetes_dispensados_1000 * 1000, billetes_dispensados_500 * 500, billetes_dispensados_100 * 100])
+        else:
+            print("\nNo se puede dispensar el monto solicitado debido a la falta de billetes.")
+
+    continuar = input("\n¿Desea realizar otra transacción? (Sí/No): ")
+    if continuar.lower() != 'si':
+        break
+
+print(f"\nLímite de retiro restante: {limite_retiro}")
